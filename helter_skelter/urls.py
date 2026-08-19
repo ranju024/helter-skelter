@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from accounts.views import *
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -24,5 +24,6 @@ urlpatterns = [
     path("login/", LoginView.as_view()),
     path("logout/", LogoutView.as_view()),
     path("profile/", ProfileView.as_view()),
-
+    path("api/", include("interactions.urls")),
+    path('api/', include('music.urls')),
 ]
