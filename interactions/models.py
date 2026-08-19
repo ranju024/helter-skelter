@@ -5,7 +5,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
-# instead of using simple ForeignKey for each field, we use GenericForeignKey so that a single field can point to any model ( more than just one)
+# instead of using simple ForeignKey for each field, we use GenericForeignKey 
+# so that a single field can point to any model ( more than just one)
 
 class Rating(models.Model):
     #  user(FK Auth user), content_type + object_id + content_object for GFK,
@@ -18,8 +19,11 @@ class Rating(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta: 
+        unique_together = ('user', 'content_type', 'object_id')  # one user -> one rating
+
     def __str__(self):
-        return f"{self.user} rated {self.content_object} {self.score}/10"
+        return f"{self.user} rated {self.content_object} {self.score} / 10"
     
 
 # one user, one review
@@ -39,6 +43,10 @@ class Review(models.Model):
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'content_type', 'object_id')  # one user -> one review
+        ordering = ['-created_at']  # newest reviews first
 
     def __str__(self):
         return f"Review by {self.user} on {self.content_object}"
@@ -67,5 +75,8 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['created_at'] # older comments first, i.e. default ascending order
+ 
     def __str__(self):
         return f"Comment by {self.user} on {self.content_object}"
